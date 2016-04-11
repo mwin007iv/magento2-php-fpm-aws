@@ -14,6 +14,8 @@ RUN curl -o clusterclient-aws-php7.zip https://s3.amazonaws.com/elasticache-down
 ENV PHP_SENDMAIL_PATH /usr/sbin/ssmtp -t
 RUN echo "sendmail_path = $PHP_SENDMAIL_PATH" >>   /usr/local/etc/php/php.ini
 
+RUN apt-get update && apt-get install -y ssmtp
+
 ## sSMTP
 ENV SSMTP_ROOT example.address@gmail.com
 ENV SSMTP_MAILHUB smtp.gmail.com:587
