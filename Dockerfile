@@ -29,5 +29,5 @@ ENV SSMTP_AUTH_METHOD LOGIN
 ADD ./assets/update_ssmtp.sh /usr/bin/update_ssmtp.sh
 RUN rm -f /etc/ssmtp/ssmtp.conf
 ADD ./assets/ssmtp.conf /etc/ssmtp/ssmtp.conf
-RUN bash /usr/bin/update_ssmtp.sh
+RUN /usr/bin/update_ssmtp.sh
 
