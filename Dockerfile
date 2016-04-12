@@ -15,33 +15,3 @@ ENV PHP_SENDMAIL_PATH /usr/sbin/ssmtp -t
 RUN echo "sendmail_path = $PHP_SENDMAIL_PATH" >>   /usr/local/etc/php/php.ini
 
 RUN apt-get update && apt-get install -y ssmtp
-
-## sSMTP
-ENV SSMTP_ROOT example.address@gmail.com
-ENV SSMTP_MAILHUB smtp.gmail.com:587
-ENV SSMTP_HOSTNAME smtp.gmail.com:587
-ENV SSMTP_USE_STARTTLS YES
-ENV SSMTP_AUTH_USER example.address@gmail.com
-ENV SSMTP_AUTH_PASS emailpassword
-ENV SSMTP_FROMLINE_OVERRIDE YES
-ENV SSMTP_AUTH_METHOD LOGIN
-
-RUN rm -f /etc/ssmtp/ssmtp.conf
-ADD ./assets/ssmtp.conf /etc/ssmtp/ssmtp.conf
-
-
-# COPY ./assets/aws-magento-entrypoint.sh /
-# RUN chmod +x /aws-magento-entrypoint.sh
-# ENTRYPOINT ["/aws-magento-entrypoint.sh"]
-sed -i \
-    -e "s/\(root=\).*\$/\1$SSMTP_ROOT/g" \
-    -e "s/\(mailhub=\).*\$/\1$SSMTP_MAILHUB/g" \
-    -e "s/\(hostname=\).*\$/\1$SSMTP_HOSTNAME/g" \
-    -e "s/\(UseSTARTTLS=\).*\$/\1$SSMTP_USE_STARTTLS/g" \
-    -e "s/\(AuthUser=\).*\$/\1$SSMTP_AUTH_USER/g" \
-    -e "s/\(AuthPass=\).*\$/\1$SSMTP_AUTH_PASS/g" \
-    -e "s/\(AuthMethod=\).*\$/\1$SSMTP_AUTH_METHOD/g" \
-    -e "s/\(FromLineOverride=\).*\$/\1$SSMTP_FROMLINE_OVERRIDE/g" \
-    /etc/ssmtp/ssmtp.conf
-
-
