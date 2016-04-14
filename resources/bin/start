@@ -23,19 +23,6 @@ sed -i "s#GITHUB_OAUTH_TOKEN#${GITHUB_OAUTH_TOKEN}#" /home/composer/auth.json
 sed -i "s#MAGENTO_REP_USERNAME#${MAGENTO_REP_USERNAME}#" /home/composer/auth.json
 sed -i "s#MAGENTO_REP_PASSWORD#${MAGENTO_REP_PASSWORD}#" /home/composer/auth.json
 
-if [ ! -f "/opt/elasticbeanstalk/bin/get-config" ]; then
-    echo "Could not find /opt/elasticbeanstalk/bin/get-config , did you map volume /opt/elasticbeanstalk to /opt/elasticbeanstalk ? You should."
-    exit 1
-fi
-RDS_HOSTNAME=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_HOSTNAME`
-RDS_DB_NAME=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_DB_NAME`
-RDS_USERNAME=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_USERNAME`
-RDS_PASSWORD=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_PASSWORD`
-MEDIA_S3_ACCESS_KEY=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_ACCESS_KEY`
-MEDIA_S3_SECRET_KEY=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_SECRET_KEY`
-MEDIA_S3_BUCKET=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_BUCKET`
-MEDIA_S3_REGION=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_REGION`
-ELASTICACHE_CONNECTION=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .ELASTICACHE_CONNECTION`
 
 
 # Print all the variables so it's possible to debug ..
