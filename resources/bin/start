@@ -35,6 +35,7 @@ MEDIA_S3_ACCESS_KEY=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .M
 MEDIA_S3_SECRET_KEY=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_SECRET_KEY`
 MEDIA_S3_BUCKET=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_BUCKET`
 MEDIA_S3_REGION=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_REGION`
+ELASTICACHE_CONNECTION=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .ELASTICACHE_CONNECTION`
 
 
 # Print all the variables so it's possible to debug ..
