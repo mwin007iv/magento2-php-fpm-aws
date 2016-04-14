@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+$file = getenv('APP_DIR') . '/app/etc/env.php';
+$config = require($file);
+$config['cache_types']['full_page'] = 1;
+if (getenv('ELASTICACHE_CONNECTION')) {
+    $config['session'] = array ( 'save' => 'memcached', 'save_path' => getenv('ELASTICACHE_CONNECTION'));
+    list($host, $port) = explode(':', getenv('ELASTICACHE_CONNECTION'));
+    $config['cache'] = array(
+        'frontend' => array(
+            'default' => array(
+                'backend' => 'Zend_Cache_Backend_Libmemcached',
+                'backend_options' => array(
+                    'servers' => array(
+                        array(
+                            'host' => $host,
+                            'port' => $port, 'weight' => 1
+                        )
+                    )
+                )
+            )
+        )
+    );
+
+}
+$finished = '<?php return ' . var_export($config, true) . ';';
+file_put_contents($file, $finished);

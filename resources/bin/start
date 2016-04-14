@@ -1,0 +1,176 @@
+#!/bin/bash
+[ ! -z "${PHP_MEMORY_LIMIT}" ]         && sed -i "s/PHP_MEMORY_LIMIT/${PHP_MEMORY_LIMIT}/" /usr/local/etc/php/php.ini
+[ ! -z "${PHP_SENDMAIL_PATH}" ]        && sed -i "s#PHP_SENDMAIL_PATH#${PHP_SENDMAIL_PATH}#" /usr/local/etc/php/php.ini
+[ ! -z "${PHP_PORT}" ]                 && sed -i "s/PHP_PORT/${PHP_PORT}/" /usr/local/etc/php-fpm.conf
+[ ! -z "${PHP_PM_MAX_CHILDREN}" ]      && sed -i "s/PHP_PM_MAX_CHILDREN/${PHP_PM_MAX_CHILDREN}/" /usr/local/etc/php-fpm.conf
+[ ! -z "${PHP_PM_START_SERVERS}" ]     && sed -i "s/PHP_PM_START_SERVERS/${PHP_PM_START_SERVERS}/" /usr/local/etc/php-fpm.conf
+[ ! -z "${PHP_PM_MIN_SPARE_SERVERS}" ] && sed -i "s/PHP_PM_MIN_SPARE_SERVERS/${PHP_PM_MIN_SPARE_SERVERS}/" /usr/local/etc/php-fpm.conf
+[ ! -z "${PHP_PM_MAX_SPARE_SERVERS}" ] && sed -i "s/PHP_PM_MAX_SPARE_SERVERS/${PHP_PM_MAX_SPARE_SERVERS}/" /usr/local/etc/php-fpm.conf
+[ ! -z "${APP_MAGE_MODE}" ]            && sed -i "s/APP_MAGE_MODE/${APP_MAGE_MODE}/" /usr/local/etc/php-fpm.conf
+
+sed -i "s#SSMTP_ROOT#${SSMTP_ROOT}#" /etc/ssmtp/ssmtp.conf
+sed -i "s#SSMTP_MAILHUB#${SSMTP_MAILHUB}#" /etc/ssmtp/ssmtp.conf
+sed -i "s#SSMTP_HOSTNAME#${SSMTP_HOSTNAME}#" /etc/ssmtp/ssmtp.conf
+sed -i "s#SSMTP_USE_STARTTLS#${SSMTP_USE_STARTTLS}#" /etc/ssmtp/ssmtp.conf
+sed -i "s#SSMTP_AUTHUSER#${SSMTP_AUTHUSER}#" /etc/ssmtp/ssmtp.conf
+sed -i "s#SSMTP_AUTHPASS#${SSMTP_AUTHPASS}#" /etc/ssmtp/ssmtp.conf
+sed -i "s#SSMTP_AUTHMETHOD#${SSMTP_AUTHMETHOD}#" /etc/ssmtp/ssmtp.conf
+sed -i "s#SSMTP_FROM_LINE_OVERRIDE#${SSMTP_FROM_LINE_OVERRIDE}#" /etc/ssmtp/ssmtp.conf
+
+
+
+sed -i "s#GITHUB_OAUTH_TOKEN#${GITHUB_OAUTH_TOKEN}#" /home/composer/auth.json
+sed -i "s#MAGENTO_REP_USERNAME#${MAGENTO_REP_USERNAME}#" /home/composer/auth.json
+sed -i "s#MAGENTO_REP_PASSWORD#${MAGENTO_REP_PASSWORD}#" /home/composer/auth.json
+
+if [ ! -f "/opt/elasticbeanstalk/bin/get-config" ]; then
+    echo "Could not find /opt/elasticbeanstalk/bin/get-config , did you map volume /opt/elasticbeanstalk to /opt/elasticbeanstalk ? You should."
+    exit 1
+fi
+RDS_HOSTNAME=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_HOSTNAME`
+RDS_DB_NAME=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_DB_NAME`
+RDS_USERNAME=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_USERNAME`
+RDS_PASSWORD=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .RDS_PASSWORD`
+MEDIA_S3_ACCESS_KEY=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_ACCESS_KEY`
+MEDIA_S3_SECRET_KEY=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_SECRET_KEY`
+MEDIA_S3_BUCKET=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_BUCKET`
+MEDIA_S3_REGION=`/opt/elasticbeanstalk/bin/get-config environment | jq -r .MEDIA_S3_REGION`
+
+
+# Print all the variables so it's possible to debug ..
+
+
+echo "GITHUB_OAUTH_TOKEN: ${GITHUB_OAUTH_TOKEN}"
+echo "MAGENTO_REP_USERNAME: ${MAGENTO_REP_USERNAME}"
+echo "MAGENTO_REP_PASSWORD: xxxxx"
+
+
+echo "PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}"
+echo "RDS_HOSTNAME: ${RDS_HOSTNAME}"
+echo "RDS_DB_NAME: ${RDS_DB_NAME}"
+echo "RDS_USERNAME: ${RDS_USERNAME}"
+echo "RDS_PASSWORD: xxxxx"
+echo "MAGENTO_BACKEND_FRONTNAME: ${MAGENTO_BACKEND_FRONTNAME}"
+echo "MAGENTO_LANGUAGE: ${MAGENTO_LANGUAGE}"
+echo "MAGENTO_TIMEZONE: ${MAGENTO_TIMEZONE}"
+echo "MAGENTO_CURRENCY: ${MAGENTO_CURRENCY}"
+echo "MAGENTO_ADMIN_FIRSTNAME: ${MAGENTO_ADMIN_FIRSTNAME}"
+echo "MAGENTO_ADMIN_LASTNAME: ${MAGENTO_ADMIN_LASTNAME}"
+echo "MAGENTO_ADMIN_EMAIL: ${MAGENTO_ADMIN_EMAIL}"
+echo "MAGENTO_ADMIN_USERNAME: ${MAGENTO_ADMIN_USERNAME}"
+echo "MAGENTO_ADMIN_PASSWORD: xxxxx"
+echo "MAGENTO_USE_REWRITES: ${MAGENTO_USE_REWRITES}"
+echo "MEDIA_S3_ACCESS_KEY: ${MEDIA_S3_ACCESS_KEY}"
+echo "MEDIA_S3_SECRET_KEY: xxxxx"
+echo "MEDIA_S3_BUCKET: ${MEDIA_S3_BUCKET}"
+echo "MEDIA_S3_REGION: ${MEDIA_S3_REGION}"
+echo "ELASTICACHE_CONNECTION: ${ELASTICACHE_CONNECTION}"
+
+
+echo "SSMTP_ROOT: ${SSMTP_ROOT}"
+echo "SSMTP_MAILHUB: ${SSMTP_MAILHUB}"
+echo "SSMTP_HOSTNAME: ${SSMTP_HOSTNAME}"
+echo "SSMTP_USE_STARTTLS: ${SSMTP_USE_STARTTLS}"
+echo "SSMTP_AUTHUSER: ${SSMTP_AUTHUSER}"
+echo "SSMTP_AUTHPASS: xxxxx"
+echo "SSMTP_AUTHMETHOD: ${SSMTP_AUTHMETHOD}"
+echo "SSMTP_FROM_LINE_OVERRIDE: ${SSMTP_FROM_LINE_OVERRIDE}"
+
+
+
+# Make sure this line comes last, otherwise find/replace will replace above vars
+[ ! -z "${PHP_PM}" ]                   && sed -i "s/PHP_PM/${PHP_PM}/" /usr/local/etc/php-fpm.conf
+
+
+composer install --optimize-autoloader --prefer-dist
+chown -R www-data:www-data /src
+
+if [ ! -f /src/composer.lock ]; then
+    echo "Could not find /src/composer.lock. Did you map Magento root folder (containing composer.json) to docker container /src folder? Example: docker run .. -v /var/www/html/magento:/src"
+    exit 1
+fi
+
+echo "Patching Cache Server for FPC to make varnish work."
+curl -o /src/vendor/magento/module-page-cache/Model/Cache/Server.php https://raw.githubusercontent.com/davidalger/magento2/6e2882a06170cc1ed10f6b9495fa7ab37c0e6c49/app/code/Magento/PageCache/Model/Cache/Server.php
+
+
+if [ -d /src/bin ]; then
+  cp /usr/local/bin/magento /src/bin/
+  cp /usr/local/bin/magento-php /src/bin/
+fi
+
+
+echo "Running magento setup:install"
+/src/bin/magento setup:install \
+      --db-host="${RDS_HOSTNAME}" \
+      --db-name="${RDS_DB_NAME}" \
+      --db-user="${RDS_USERNAME}" \
+      --db-password="${RDS_PASSWORD}" \
+      --backend-frontname="${MAGENTO_BACKEND_FRONTNAME}" \
+      --language="${MAGENTO_LANGUAGE}" \
+      --timezone="${MAGENTO_TIMEZONE}" \
+      --currency="${MAGENTO_CURRENCY}" \
+      --admin-lastname="${MAGENTO_ADMIN_LASTNAME}"\
+      --admin-firstname="${MAGENTO_ADMIN_FIRSTNAME}" \
+      --admin-email="${MAGENTO_ADMIN_EMAIL}" \
+      --admin-user="${MAGENTO_ADMIN_USERNAME}" \
+      --admin-password="${MAGENTO_ADMIN_PASSWORD}" \
+      --use-rewrites="${MAGENTO_USE_REWRITES}"
+
+echo "Running magento replace env vars"
+APP_DIR=/src ELASTICACHE_CONNECTION="${ELASTICACHE_CONNECTION}" /usr/local/bin/magento-replace-env-vars
+
+echo "Running full reindex"
+/src/bin/magento indexer:reindex
+
+echo "Setting asset minification defaults"
+mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PORT}" "${RDS_DB_NAME}" -e "REPLACE INTO core_config_data (value, path) VALUES \
+                    ('', 'web/secure/base_static_url'), ('', 'web/unsecure/base_static_url'), \
+                    ('0',  'dev/js/merge_files'), ('1', 'dev/js/minify_files'), ('0', 'dev/js/enable_js_bundling'), \
+                    ('1',  'dev/css/merge_files'), ('1', 'dev/css/minify_files'), \
+                    ('1', 'dev/template/minify_html');"
+
+echo "Enabling S3 assets module"
+/src/bin/magento module:enable Arkade_S3
+/src/bin/magento s3:config:set \
+    --access-key-id "${MEDIA_S3_ACCESS_KEY}" \
+    --secret-key "${MEDIA_S3_SECRET_KEY}" \
+    --bucket "${MEDIA_S3_BUCKET}" \
+    --region "${MEDIA_S3_REGION}"
+
+
+
+
+echo "Clearing cache"
+/src/bin/magento cache:clean
+/src/bin/magento cache:clear
+
+echo "Setting mode to production"
+/src/bin/magento deploy:mode:set production
+
+echo "Compiling dependency injector"
+/src/bin/magento setup:di:compile
+
+echo "Generating fixtures"
+/src/bin/magento setup:performance:generate-fixtures
+
+echo "Deploying static files"
+/src/bin/magento setup:static-content:deploy
+
+
+echo "Correcting permissions"
+chown -R www-data:www-data /src
+chmod -R 777 /src/*
+
+
+# Only start php-fpm if successful ...
+if [ -f /src/composer.lock ]; then
+    echo "Starting CRON"
+    # Start the cron service
+    /usr/sbin/cron
+    echo "Starting php-fpm"
+    # Start the php-fpm service
+    /usr/local/sbin/php-fpm
+else
+    echo "ERROR: could not find /src/composer.lock in magento php container.... Did you mount magento root dir as a volume to /src? You should..."
+fi
