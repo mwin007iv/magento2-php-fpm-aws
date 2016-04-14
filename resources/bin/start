@@ -134,19 +134,12 @@ echo "Enabling S3 assets module"
 
 
 
-
 echo "Clearing cache"
 /src/bin/magento cache:clean
-/src/bin/magento cache:clear
+/src/bin/magento cache:flush
 
 echo "Setting mode to production"
 /src/bin/magento deploy:mode:set production
-
-echo "Compiling dependency injector"
-/src/bin/magento setup:di:compile
-
-echo "Generating fixtures"
-/src/bin/magento setup:performance:generate-fixtures
 
 echo "Deploying static files"
 /src/bin/magento setup:static-content:deploy
