@@ -27,6 +27,8 @@ sed -i "s#MAGENTO_REP_PASSWORD#${MAGENTO_REP_PASSWORD}#" /home/composer/auth.jso
 
 # Print all the variables so it's possible to debug ..
 
+echo "WEBSITE_UNSECURE_URL: ${WEBSITE_UNSECURE_URL}"
+echo "WEBSITE_SECURE_URL: ${WEBSITE_SECURE_URL}"
 
 echo "GITHUB_OAUTH_TOKEN: ${GITHUB_OAUTH_TOKEN}"
 echo "MAGENTO_REP_USERNAME: ${MAGENTO_REP_USERNAME}"
@@ -114,11 +116,9 @@ echo "Running magento replace env vars"
 chmod +x /usr/local/bin/magento-replace-env-vars
 APP_DIR=/src ELASTICACHE_CONNECTION="${ELASTICACHE_CONNECTION}" /usr/local/bin/magento-replace-env-vars
 
-echo "Running full reindex"
-/src/bin/magento indexer:reindex
-
 echo "Setting asset minification defaults"
 mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PORT}" "${RDS_DB_NAME}" -e "REPLACE INTO core_config_data (value, path) VALUES \
+                    ('${WEBSITE_SECURE_URL}', 'web/secure/base_url'), ('${WEBSITE_UNSECURE_URL}', 'web/unsecure/base_url'), \
                     ('', 'web/secure/base_static_url'), ('', 'web/unsecure/base_static_url'), \
                     ('0',  'dev/js/merge_files'), ('1', 'dev/js/minify_files'), ('0', 'dev/js/enable_js_bundling'), \
                     ('1',  'dev/css/merge_files'), ('1', 'dev/css/minify_files'), \
@@ -133,6 +133,8 @@ echo "Enabling S3 assets module"
     --region "${MEDIA_S3_REGION}"
 
 
+echo "Running full reindex"
+/src/bin/magento indexer:reindex
 
 echo "Clearing cache"
 /src/bin/magento cache:clean

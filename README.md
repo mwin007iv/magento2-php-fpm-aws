@@ -189,6 +189,14 @@ This is sample configuration file, it includes and configures:
         {
           "name": "SSMTP_AUTHPASS",
           "value": "xxxxxxx"
+        },
+        {
+            "name": "WEBSITE_UNSECURE_URL",
+            "value": "http://my-env.xxxxxxx.eu-west-1.elasticbeanstalk.com"
+        },
+        {
+            "name": "WEBSITE_SECURE_URL",
+            "value": "https://my-env.xxxxxxx.eu-west-1.elasticbeanstalk.com"
         }
       ],
       "mountPoints": [
@@ -212,8 +220,11 @@ eb init
 
 ## Create environment
 
+- `--vpc` because we need cross comunication between ec2 instances to clear varnish
+- `-i t2.small` because it's the minimum instance with enough memory for composer installs. See pricing in aws pages.
+
 ```
-eb create
+eb create my-env --database  -i t2.small
 ```
 
 
