@@ -31,6 +31,7 @@ It's supposed to be used with Amazon Beanstalk Docker Environments.
 ## Create a structure
 
 
+```
 .
 ├── Dockerrun.aws.json
 ├── server_env
@@ -43,6 +44,7 @@ It's supposed to be used with Amazon Beanstalk Docker Environments.
     ├── composer.json
     ├── composer.lock
     ├── .gitignore
+```
 
 
 - Dockerrun.aws.json is AWS Beanstalk compose file for docker.
