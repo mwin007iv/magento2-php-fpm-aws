@@ -38,16 +38,21 @@ $qry = $dbh->prepare("SELECT hostname FROM `$table` WHERE last_checked > NOW() -
 $qry->execute();
 
 // Get the old hosts into $old_hosts so we can check if we need to clear the config cache..
-$old_hosts = isset($config['http_cache_hosts']) ? $config['http_cache_hosts'] : array();
+$old_hosts = array();
+if (isset($config['http_cache_hosts'])) {
+    foreach ($config['http_cache_hosts'] as $h) {
+        $old_hosts[] = $h;
+    }
+}
 
 // Get the new hosts from the varnish SQL table..
-$config['http_cache_hosts'] = $qry->fetchAll(PDO::FETCH_COLUMN, 0);
+$newHosts = $qry->fetchAll(PDO::FETCH_COLUMN, 0);
 
 
 // We don't want to invalidate cache all the time
 // This ensuers that we only invalidate the cache if we need to do so.
 $invalidate_cache = false;
-foreach ($config['http_cache_hosts'] as $host) {
+foreach ($newHosts as $host) {
     if (!in_array($host, $old_hosts)) {
         $invalidate_cache = true;
         break;
@@ -59,6 +64,14 @@ foreach ($old_hosts as $host) {
         break;
     }
 }
+
+$config['http_cache_hosts'] = array();
+foreach($newHosts as $host) {
+    $config['http_cache_hosts'][] = array(
+        'host' => $host
+    );
+}
+
 
 if ($invalidate_cache) {
     echo "Cleared cache config, reason varnish host added or deleted.\n";
