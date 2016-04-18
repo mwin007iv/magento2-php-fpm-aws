@@ -13,6 +13,7 @@ The image is based on code from [Mageinferno Magento 2 repo](https://github.com/
 - mysql-client
 - aws php-7 elasticache client 
 - deployment routine ( on docker container start )
+- multi varnish cache-aware ec2's. If there are 10 servers, 10 varnish cache hosts is cleared. 
 
 
 This image is configured to run with the following amazon services:

@@ -34,7 +34,8 @@ $dbh->query("REPLACE INTO `$table` (hostname) VALUES ('$ipv4_for_this_ec2');");
 //
 // Find all hosts that was last updated in the last 4 minutes and select them, the others are blatantly ignored.
 //
-$qry = $dbh->query("SELECT hostname FROM `$table` WHERE last_checked > NOW() - INTERVAL 4 MINUTE");
+$qry = $dbh->prepare("SELECT hostname FROM `$table` WHERE last_checked > NOW() - INTERVAL 4 MINUTE");
+$qry->execute();
 
 // Get the old hosts into $old_hosts so we can check if we need to clear the config cache..
 $old_hosts = isset($config['http_cache_hosts']) ? $config['http_cache_hosts'] : array();
