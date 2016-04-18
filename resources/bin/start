@@ -124,12 +124,12 @@ mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PO
                     ('1',  'dev/css/merge_files'), ('1', 'dev/css/minify_files'), \
                     ('1', 'dev/template/minify_html');"
 
-
-# varnish should be the public IP of the EC2 Container .
-# todo add support for mulitple ec2s. If multiple ec2 only one of the hosts get its cache cleaned... 
-PUBLIC_HOSTNAME=`curl -s http://169.254.169.254/latest/meta-data/public-hostname`
-/src/bin/magento setup:config:set --http-cache-hosts="$PUBLIC_HOSTNAME"
-
+echo "Creating docker_varnish_hosts table if not exist."
+mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PORT}" "${RDS_DB_NAME}" -e "CREATE TABLE IF NOT EXISTS `docker_varnish_hosts` (
+                                                                                                            `hostname` varchar(700) NOT NULL,
+                                                                                                            `last_checked` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                                                                                            PRIMARY KEY (`hostname`),
+                                                                                                            UNIQUE KEY `hostname` (`hostname`);"
 
 
 echo "Enabling S3 assets module"

@@ -237,6 +237,10 @@ eb deploy
 
 
 
+
+
+
+
 # Variables
 
 ## Required variables
@@ -287,6 +291,10 @@ The following variables may be set to control the PHP environment:
 - `MAGENTO_ADMIN_PASSWORD`: (default `Admin321123`)
 - `MAGENTO_USE_REWRITES`: (default `1`)
 
+- `WEBSITE_UNSECURE_URL`: (default ``) URL to aws beanstalk endpoint or the domain name if you have assigned a domain. Note that you first get a domain after the first environment has been created in AWS Beanstalk.
+- `WEBSITE_SECURE_URL`: (default ``) URL to aws beanstalk endpoint or the domain name if you have assigned a domain.
+
+
 
 ### Elasticache for backend cache
 
@@ -332,6 +340,70 @@ SSMTP is used for sending email, configure SSMTP to work with any mail provider.
 
 
 
+
+# Advanced Configuration
+
+
+## Composer home as a volume
+
+If you don't map composer home to a volume, all vendors are downloaded for every deploy: meaning much more time to deploy.
+
+This can be solved by adding composer home as a volume, however then you also need to create `auth.json` manually!
+
+### Create composer home
+ 
+```
+mkdir -p /home/composer
+touch /home/composer/auth.json
+```
+
+/home/composer/auth.json ( replace with your valid tokens ):
+
+```
+{
+  "github-oauth": {
+    "github.com": "GITHUB_OAUTH_TOKEN"
+  },
+  "http-basic": {
+    "repo.magento.com": {
+      "username": "MAGENTO_REP_USERNAME",
+      "password": "MAGENTO_REP_PASSWORD"
+    }
+  }
+}
+```
+
+
+### Dockerrun.aws.json
+
+```
+{
+  "AWSEBDockerrunVersion": 2,
+  "volumes": [
+    .....
+    {
+      "name": "composer-home",
+      "host": {
+        "sourcePath": "/home/composer"
+      }
+    }
+
+  ],
+  "containerDefinitions": [
+    ....
+    {
+      "name": "php-app",
+      ....
+      "mountPoints": [
+        {
+          "sourceVolume": "composer-home",
+          "containerPath": "/home/composer"
+        }
+      ]
+    }
+  ]
+}
+```
 
 
 # One-off containers
