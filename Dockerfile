@@ -25,10 +25,10 @@ RUN docker-php-ext-install \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=1.0.0-alpha11
 
-RUN echo "*/1 * * * * su -c \"/usr/local/bin/php /src/update/cron.php\" -s /bin/sh www-data" | crontab - \
-  && (crontab -l ; echo "*/1 * * * * su -c \"/usr/local/bin/magento-varnish-cron\" -s /bin/sh www-data") | crontab - \
-  && (crontab -l ; echo "*/1 * * * * su -c \"/usr/local/bin/php /src/bin/magento-php cron:run\" -s /bin/sh www-data") | crontab - \
-  && (crontab -l ; echo "*/1 * * * * su -c \"/usr/local/bin/php /src/bin/magento-php setup:cron:run\" -s /bin/sh www-data") | crontab -
+RUN echo "*/1 * * * * su -c \"/usr/local/bin/php /src/update/cron.php >> /src/var/log/magento.cron.log\" -s /bin/sh www-data" | crontab - \
+  && (crontab -l ; echo "*/1 * * * * su -c \"/usr/local/bin/magento-varnish-cron >> /src/var/log/aws-magento-varnish.cron.log\" -s /bin/sh www-data") | crontab - \
+  && (crontab -l ; echo "*/1 * * * * su -c \"/usr/local/bin/php /src/bin/magento-php cron:run >> /src/var/log/magento.cron.log\" -s /bin/sh www-data") | crontab - \
+  && (crontab -l ; echo "*/1 * * * * su -c \"/usr/local/bin/php /src/bin/magento-php setup:cron:run >> /src/var/log/magento.cron.log\" -s /bin/sh www-data") | crontab -
 
 ENV PHP_MEMORY_LIMIT 2G
 ENV PHP_PORT 9000

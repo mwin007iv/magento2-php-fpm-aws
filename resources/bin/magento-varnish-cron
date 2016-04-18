@@ -4,24 +4,48 @@
 $file = '/src/app/etc/env.php';
 $config = require($file);
 
+echo "Varnish hosts update: "  . date('Y-m-d H:i:s') . "\n";
+
+//
+// This table keeps track of all the internal ip's within the VPC that has a varnish endpoint.
+// Note: the table is created in the start script.
+//
 $table = 'docker_varnish_hosts';
+
+//
+// This gets the LOCAL EC2 IP-v4 address within the VPC. This can be used to access other EC2's inside the VPC.
+//
 $ipv4_for_this_ec2 = file_get_contents('http://169.254.169.254/latest/meta-data/local-ipv4');
 
-
-// Open up connection to RDS.
+//
+// Open up connection to RDS using magento's env.php config file.
+//
 $dsn = "mysql:host={$config['db']['connection']['default']['host']};port=3306;dbname={$config['db']['connection']['default']['dbname']}";
 $username = $config['db']['connection']['default']['username'];
 $password = $config['db']['connection']['default']['password'];
 $dbh = new PDO($dsn, $username, $password);
 
+
+//
+// Replace into, meaning update the timestamp "last_updated" and add the IP address to the varnish mysql table.
+//
 $dbh->query("REPLACE INTO `$table` (hostname) VALUES ('$ipv4_for_this_ec2');")->execute();
-// if cron script has not run on that specific EC2 within 4 minutes, then we will actually exclude it from env.php cache hosts...
+
+//
+// Find all hosts that was last updated in the last 4 minutes and select them, the others are blatantly ignored.
+//
 $qry = $dbh->query("SELECT hostname FROM `$table` WHERE last_checked > NOW() - INTERVAL 4 MINUTE");
 $qry->execute();
 
+// Get the old hosts into $old_hosts so we can check if we need to clear the config cache..
 $old_hosts = isset($config['http_cache_hosts']) ? $config['http_cache_hosts'] : array();
+
+// Get the new hosts from the varnish SQL table..
 $config['http_cache_hosts'] = $qry->fetchAll(PDO::FETCH_COLUMN, 0);
 
+
+// We don't want to invalidate cache all the time
+// This ensuers that we only invalidate the cache if we need to do so.
 $invalidate_cache = false;
 foreach ($config['http_cache_hosts'] as $host) {
     if (!in_array($host, $old_hosts)) {
@@ -37,7 +61,8 @@ foreach ($old_hosts as $host) {
 }
 
 if ($invalidate_cache) {
-    echo "Cleared cache config, reason varnish host added or deleted.";
+    echo "Cleared cache config, reason varnish host added or deleted.\n";
+    // We only need to clean config, now that we know that the env.php file changed...
     passthru("/src/bin/magento cache:clean config");
 }
 

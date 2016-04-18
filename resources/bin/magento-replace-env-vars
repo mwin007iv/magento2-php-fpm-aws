@@ -24,28 +24,5 @@ if (getenv('ELASTICACHE_CONNECTION')) {
 }
 
 
-$config['http_cache_hosts'] = isset($config['http_cache_hosts']) ? $config['http_cache_hosts'] :  array();
-
-// This cleans up old cache hosts, if there is no contact it's PROBABLY down / deleted / scaled DOWN .
-// Check the current cache hosts, since there can be many ec2's.
-// If there are no longer connection with these, lets remove the host from the cache hosts array...
-foreach ($config['http_cache_hosts'] as $key => $host) {
-    $port = 80; // web ( the varnish host )
-    $errno = null;
-    $errstr = null;
-    $connection = @fsockopen($host, $port, $errno, $errstr, 2);
-    if (!$connection) {
-        unset($config['http_cache_hosts'][$key]);
-    }
-}
-
-// Add this ec2 to the http_cache_hosts if not already there.
-$ipv4_for_this_ec2 = file_get_contents('http://169.254.169.254/latest/meta-data/local-ipv4');
-if (!in_array($ipv4_for_this_ec2, $config['http_cache_hosts'])) {
-    $config['http_cache_hosts'][] = $ipv4_for_this_ec2;
-}
-
-
-
 $finished = '<?php return ' . var_export($config, true) . ';';
 file_put_contents($file, $finished);
