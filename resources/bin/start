@@ -125,11 +125,7 @@ mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PO
                     ('1', 'dev/template/minify_html');"
 
 echo "Creating docker_varnish_hosts table if not exist."
-mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PORT}" "${RDS_DB_NAME}" -e "CREATE TABLE IF NOT EXISTS `docker_varnish_hosts` (
-                                                                                                            `hostname` varchar(700) NOT NULL,
-                                                                                                            `last_checked` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                                                                            PRIMARY KEY (`hostname`),
-                                                                                                            UNIQUE KEY `hostname` (`hostname`);"
+mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PORT}" "${RDS_DB_NAME}" -e 'CREATE TABLE IF NOT EXISTS `docker_varnish_hosts` ( `hostname` varchar(700) NOT NULL, `last_checked` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`hostname`), UNIQUE KEY `hostname` (`hostname`) )'
 
 
 echo "Enabling S3 assets module"
