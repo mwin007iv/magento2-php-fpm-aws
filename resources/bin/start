@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 [ ! -z "${PHP_MEMORY_LIMIT}" ]         && sed -i "s/PHP_MEMORY_LIMIT/${PHP_MEMORY_LIMIT}/" /usr/local/etc/php/php.ini
 [ ! -z "${PHP_SENDMAIL_PATH}" ]        && sed -i "s#PHP_SENDMAIL_PATH#${PHP_SENDMAIL_PATH}#" /usr/local/etc/php/php.ini
 [ ! -z "${PHP_PORT}" ]                 && sed -i "s/PHP_PORT/${PHP_PORT}/" /usr/local/etc/php-fpm.conf
@@ -111,6 +113,7 @@ echo "Running magento setup:install"
       --admin-user="${MAGENTO_ADMIN_USERNAME}" \
       --admin-password="${MAGENTO_ADMIN_PASSWORD}" \
       --use-rewrites="${MAGENTO_USE_REWRITES}"
+
 
 echo "Running magento replace env vars"
 chmod +x /usr/local/bin/magento-replace-env-vars
