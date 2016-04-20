@@ -1,6 +1,12 @@
 # Description
 
-Run magento 2 in AWS Beanstalk with autoscaling and tons of features.
+Run magento 2 in **AWS Elastic Beanstalk** with autoscaling and tons of features.
+
+AWS Notes:
+
+1. Create VPC: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/vpc-rds.html#vpc-rds-create-env to allow multi varnish communication.
+2. Launch a Elastic Beanstalk application within the above VPC.
+
 
 This image is built from the official [`php`](https://hub.docker.com/_/php/) repository and contains PHP configurations for Magento 2.
 
@@ -237,8 +243,15 @@ eb deploy
 ``` 
 
 
+## Go to aws console
 
+!THIS IS NEEDED SO ALL VARNISH HOSTS GETS CLEARED WHEN UPDATING CONTENT IN MAGENTO!
 
+Now we need to add extra rule to Security Group that was generated for the environment.
+
+1. Go to VPC > Security Groups
+1. Find the security group for the Elastic Beanstalk environment ( not Load balanceder / ELB )
+1. Add extra rule: port: 80 , source: itself . So that EC2's can communicate between eachother on port 80.
 
 
 

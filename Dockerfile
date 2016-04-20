@@ -96,5 +96,6 @@ RUN curl -o clusterclient-aws-php7.zip https://s3.amazonaws.com/elasticache-down
      docker-php-ext-enable amazon-elasticache-cluster-client
 
 RUN apt-get update && apt-get install -y mysql-client ssmtp
+COPY resources/conf/ssmtp.conf /etc/ssmtp/ssmtp.conf
 
 CMD ["/usr/local/bin/start"]
