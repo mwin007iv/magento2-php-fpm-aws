@@ -147,13 +147,12 @@ echo "Clearing cache"
 /src/bin/magento cache:clean
 /src/bin/magento cache:flush
 
+echo "Setup upgrade"
+/src/bin/magento setup:upgrade
 
 echo "Setting mode to production"
 /src/bin/magento deploy:mode:set production
 
-echo "Setup upgrade"
-/src/bin/magento setup:upgrade
-/src/bin/magento setup:di:compile
 
 
 echo "Deploying static files"
