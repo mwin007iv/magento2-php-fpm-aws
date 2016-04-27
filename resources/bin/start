@@ -150,10 +150,8 @@ echo "Clearing cache"
 echo "Setup upgrade"
 /src/bin/magento setup:upgrade
 
-echo "Setting mode to production"
-/src/bin/magento deploy:mode:set production
-
-
+echo "DI Compliation"
+/src/bin/magento setup:di:compile 
 
 echo "Deploying static files"
 /src/bin/magento setup:static-content:deploy "${MAGENTO_LANGUAGE} en_US"
