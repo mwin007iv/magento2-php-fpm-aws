@@ -156,7 +156,7 @@ echo "Deploying static files"
 
 echo "Correcting permissions"
 chown -R www-data:www-data /src
-chmod -R 777 /src/*
+chmod -R 0777 /src
 
 
 # Only start php-fpm if successful ...
