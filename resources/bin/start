@@ -151,7 +151,7 @@ echo "Setting mode to production"
 /src/bin/magento deploy:mode:set production
 
 echo "Deploying static files"
-/src/bin/magento setup:static-content:deploy
+/src/bin/magento setup:static-content:deploy "${MAGENTO_LANGUAGE}"
 
 
 echo "Correcting permissions"
