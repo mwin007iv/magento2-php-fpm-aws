@@ -154,6 +154,8 @@ echo "DI Compliation"
 /src/bin/magento setup:di:compile 
 
 echo "Deploying static files"
+chown -R www-data:www-data /src
+chmod -R 0777 /src
 /src/bin/magento setup:static-content:deploy "${MAGENTO_LANGUAGE} en_US"
 
 
