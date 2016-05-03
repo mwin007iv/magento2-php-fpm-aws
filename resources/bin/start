@@ -123,8 +123,8 @@ echo "Setting asset minification defaults"
 mysql -u "${RDS_USERNAME}" -p"${RDS_PASSWORD}" -h "${RDS_HOSTNAME}" -P "${RDS_PORT}" "${RDS_DB_NAME}" -e "REPLACE INTO core_config_data (value, path) VALUES \
                     ('${WEBSITE_SECURE_URL}', 'web/secure/base_url'), ('${WEBSITE_UNSECURE_URL}', 'web/unsecure/base_url'), \
                     ('', 'web/secure/base_static_url'), ('', 'web/unsecure/base_static_url'), \
-                    ('0',  'dev/js/merge_files'), ('1', 'dev/js/minify_files'), ('0', 'dev/js/enable_js_bundling'), \
-                    ('1',  'dev/css/merge_files'), ('1', 'dev/css/minify_files'), \
+                    ('0',  'dev/js/merge_files'), ('0', 'dev/js/minify_files'), ('0', 'dev/js/enable_js_bundling'), \
+                    ('1',  'dev/css/merge_files'), ('0', 'dev/css/minify_files'), \
                     ('1', 'dev/template/minify_html');"
 
 echo "Creating docker_varnish_hosts table if not exist."
