@@ -73,6 +73,7 @@ echo "SSMTP_FROM_LINE_OVERRIDE: ${SSMTP_FROM_LINE_OVERRIDE}"
 # Make sure this line comes last, otherwise find/replace will replace above vars
 [ ! -z "${PHP_PM}" ]                   && sed -i "s/PHP_PM/${PHP_PM}/" /usr/local/etc/php-fpm.conf
 
+chown -R www-data:www-data /var/www
 chown -R www-data:www-data /src
 su -c "composer install --optimize-autoloader --prefer-dist" -s /bin/sh www-data
 

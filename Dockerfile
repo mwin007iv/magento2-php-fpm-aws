@@ -88,6 +88,9 @@ COPY resources/bin/* /usr/local/bin/
 RUN mkdir -p /home/composer
 COPY resources/conf/auth.json /home/composer/
 
+# Create dir for www home user, to store .ssh keys.
+RUN mkdir -p /var/www
+
 WORKDIR /src
 
 RUN apt-get update && apt-get install -y gcc g++ unzip jq
