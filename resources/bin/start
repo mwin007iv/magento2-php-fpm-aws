@@ -167,8 +167,8 @@ chmod -R 0777 /src
 # Only start php-fpm if successful ...
 if [ -f /src/composer.lock ]; then
     echo "Starting CRON"
-    su -c "/usr/sbin/cron" -s /bin/sh www-data
-    
+    /usr/sbin/cron
+
     echo "Starting php-fpm"
     /usr/local/sbin/php-fpm
 else
