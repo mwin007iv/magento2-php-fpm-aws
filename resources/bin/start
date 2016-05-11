@@ -68,20 +68,24 @@ echo "SSMTP_AUTHPASS: xxxxx"
 echo "SSMTP_AUTHMETHOD: ${SSMTP_AUTHMETHOD}"
 echo "SSMTP_FROM_LINE_OVERRIDE: ${SSMTP_FROM_LINE_OVERRIDE}"
 
-
+echo "AVOID_COMPOSER: ${AVOID_COMPOSER}"
 
 # Make sure this line comes last, otherwise find/replace will replace above vars
 [ ! -z "${PHP_PM}" ]                   && sed -i "s/PHP_PM/${PHP_PM}/" /usr/local/etc/php-fpm.conf
 
-chown -R www-data:www-data /var/www
-chown -R www-data:www-data /src
-chown -R www-data:www-data /home/composer
-su -c "composer install --optimize-autoloader --prefer-dist" -s /bin/sh www-data
 
-if [ ! -f /src/composer.lock ]; then
-    echo "Could not find /src/composer.lock. Did you map Magento root folder (containing composer.json) to docker container /src folder? Example: docker run .. -v /var/www/html/magento:/src"
-    exit 1
+if [ -z "${AVOID_COMPOSER}" ]; then
+    chown -R www-data:www-data /var/www
+    chown -R www-data:www-data /src
+    chown -R www-data:www-data /home/composer
+    su -c "composer install --optimize-autoloader --prefer-dist" -s /bin/sh www-data
+
+    if [ ! -f /src/composer.lock ]; then
+        echo "Could not find /src/composer.lock. Did you map Magento root folder (containing composer.json) to docker container /src folder? Example: docker run .. -v /var/www/html/magento:/src"
+        exit 1
+    fi
 fi
+
 
 echo "Patching Cache Server for FPC to make varnish work."
 curl -o /src/vendor/magento/module-page-cache/Model/Cache/Server.php https://raw.githubusercontent.com/davidalger/magento2/6e2882a06170cc1ed10f6b9495fa7ab37c0e6c49/app/code/Magento/PageCache/Model/Cache/Server.php
@@ -167,7 +171,7 @@ chmod -R 0777 /src
 
 
 # Only start php-fpm if successful ...
-if [ -f /src/composer.lock ]; then
+if [ -f /src/app/etc/env.php ]; then
     echo "Starting CRON"
     /usr/sbin/cron
 

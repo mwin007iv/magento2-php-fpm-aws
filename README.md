@@ -353,6 +353,10 @@ SSMTP is used for sending email, configure SSMTP to work with any mail provider.
 - `SSMTP_FROM_LINE_OVERRIDE`: (default `YES`) 
 
 
+### Without composer
+
+- `AVOID_COMPOSER`: (default ``) Set to "1" to avoid composer install step. Useful if you commit vendor directory for faster instance boot and not have to worry about repositories being available.
+
 
 
 # Advanced Configuration
