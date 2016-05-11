@@ -3,6 +3,7 @@ MAINTAINER Petter Kjelkenes <kjelkenes@gmail.com>
 
 RUN apt-get update \
   && apt-get install -y \
+    git \
     cron \
     libfreetype6-dev \
     libicu-dev \
