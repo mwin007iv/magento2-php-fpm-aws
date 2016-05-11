@@ -75,6 +75,7 @@ echo "SSMTP_FROM_LINE_OVERRIDE: ${SSMTP_FROM_LINE_OVERRIDE}"
 
 chown -R www-data:www-data /var/www
 chown -R www-data:www-data /src
+chown -R www-data:www-data /home/composer
 su -c "composer install --optimize-autoloader --prefer-dist" -s /bin/sh www-data
 
 if [ ! -f /src/composer.lock ]; then
