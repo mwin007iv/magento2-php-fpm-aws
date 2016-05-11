@@ -73,8 +73,8 @@ echo "SSMTP_FROM_LINE_OVERRIDE: ${SSMTP_FROM_LINE_OVERRIDE}"
 # Make sure this line comes last, otherwise find/replace will replace above vars
 [ ! -z "${PHP_PM}" ]                   && sed -i "s/PHP_PM/${PHP_PM}/" /usr/local/etc/php-fpm.conf
 
-
-composer install --optimize-autoloader --prefer-dist
+chown -R www-data:www-data /src
+su -c "composer install --optimize-autoloader --prefer-dist" -s /bin/sh www-data
 
 if [ ! -f /src/composer.lock ]; then
     echo "Could not find /src/composer.lock. Did you map Magento root folder (containing composer.json) to docker container /src folder? Example: docker run .. -v /var/www/html/magento:/src"
@@ -167,10 +167,9 @@ chmod -R 0777 /src
 # Only start php-fpm if successful ...
 if [ -f /src/composer.lock ]; then
     echo "Starting CRON"
-    # Start the cron service
-    /usr/sbin/cron
+    su -c "/usr/sbin/cron" -s /bin/sh www-data
+    
     echo "Starting php-fpm"
-    # Start the php-fpm service
     /usr/local/sbin/php-fpm
 else
     echo "ERROR: could not find /src/composer.lock in magento php container.... Did you mount magento root dir as a volume to /src? You should..."
