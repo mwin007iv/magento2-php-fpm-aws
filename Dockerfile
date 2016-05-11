@@ -24,7 +24,7 @@ RUN docker-php-ext-install \
   xsl \
   zip
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=1.0.0-alpha11
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=1.1.0
 
 RUN echo "*/1 * * * * su -c \"/usr/local/bin/php /src/update/cron.php >> /src/var/log/magento.cron.log\" -s /bin/sh www-data" | crontab - \
   && (crontab -l ; echo "*/1 * * * * su -c \"/usr/local/bin/magento-varnish-cron >> /src/var/log/aws-magento-varnish.cron.log\" -s /bin/sh www-data") | crontab - \
